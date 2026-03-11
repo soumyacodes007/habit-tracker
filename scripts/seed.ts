@@ -6,11 +6,14 @@
  * seed data and production data shape.
  */
 
+// IMPORTANT: Load .env BEFORE any module that reads process.env
 import { config } from "dotenv";
-config(); // load .env before anything else
+config({ path: ".env" });
 
+// Now safe to import DB (it reads DATABASE_URL at module load time)
 import { db } from "../lib/db";
 import { habits, habitCompletions, journalEntries } from "../lib/db/schema";
+
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
