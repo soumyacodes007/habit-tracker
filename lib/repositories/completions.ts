@@ -69,7 +69,8 @@ export async function getCompletionHistory(
 export async function toggleCompletion(
   userId: string,
   habitId: string,
-  date: string // 'YYYY-MM-DD'
+  date: string, // 'YYYY-MM-DD'
+  note?: string // optional note (e.g. "5km run today")
 ): Promise<{ completed: boolean; completion?: HabitCompletion }> {
   // Check if completion already exists
   const existing = await db
@@ -93,7 +94,7 @@ export async function toggleCompletion(
     // Insert → complete
     const rows = await db
       .insert(habitCompletions)
-      .values({ userId, habitId, completedDate: date })
+      .values({ userId, habitId, completedDate: date, note })
       .returning();
     return { completed: true, completion: rows[0] };
   }

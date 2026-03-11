@@ -5,6 +5,7 @@ import {
   date,
   pgEnum,
   unique,
+  json,
 } from "drizzle-orm/pg-core";
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
@@ -26,6 +27,7 @@ export const habits = pgTable("habits", {
   description: text("description"),
   color: text("color").notNull().default("#6366f1"), // indigo default
   icon: text("icon").notNull().default("✅"),
+  targetDays: json("target_days").$type<string[]>().default(["mon", "tue", "wed", "thu", "fri", "sat", "sun"]),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -50,6 +52,7 @@ export const habitCompletions = pgTable(
       .references(() => habits.id, { onDelete: "cascade" }),
     userId: text("user_id").notNull(),
     completedDate: date("completed_date").notNull(), // 'YYYY-MM-DD'
+    note: text("note"), // optional note when completing (e.g. "5km run")
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -63,21 +66,25 @@ export const habitCompletions = pgTable(
  * One journal entry per user per day (enforced by unique constraint).
  * content is long-form text. mood is a 3-state enum.
  */
-export const journalEntries = pgTable("journal_entries", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  userId: text("user_id").notNull(),
-  content: text("content").notNull(),
-  mood: moodEnum("mood"),
-  date: date("date").notNull(), // 'YYYY-MM-DD'
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
+export const journalEntries = pgTable(
+  "journal_entries",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id").notNull(),
+    content: text("content").notNull(),
+    mood: moodEnum("mood"),
+    date: date("date").notNull(), // 'YYYY-MM-DD'
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [unique("journal_user_date_unique").on(t.userId, t.date)]
+);
 
 // ─── Inferred Types (for repositories) ───────────────────────────────────────
 
