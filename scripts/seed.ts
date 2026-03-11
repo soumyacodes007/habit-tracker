@@ -40,30 +40,35 @@ const HABITS = [
     description: "10 minutes of mindfulness",
     color: "#818cf8",
     icon: "🧘",
+    targetDays: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"], // daily
   },
   {
     name: "Read 20 Pages",
     description: "Any book counts",
     color: "#34d399",
     icon: "📖",
+    targetDays: ["mon", "tue", "wed", "thu", "fri"], // weekdays only
   },
   {
     name: "Exercise",
     description: "At least 30 minutes",
     color: "#f87171",
     icon: "🏃",
+    targetDays: ["mon", "wed", "fri", "sat"], // 4 days/week
   },
   {
     name: "Drink 2L of Water",
     description: "Stay hydrated",
     color: "#38bdf8",
     icon: "💧",
+    targetDays: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"], // daily
   },
   {
     name: "No Social Media Before Noon",
     description: "Deep work in the morning",
     color: "#fb923c",
     icon: "🚫",
+    targetDays: ["mon", "tue", "wed", "thu", "fri"], // weekdays only
   },
 ];
 
@@ -120,15 +125,27 @@ async function seed() {
     habitId: string;
     userId: string;
     completedDate: string;
+    note: string | null;
   }[] = [];
+
+  // Sample notes for completions — gives AI rich context
+  const COMPLETION_NOTES: Record<string, Record<number, string>> = {
+    "Morning Meditation": { 0: "Deep breathing + body scan", 2: "Only 5 mins but still counts", 7: "Best session this week" },
+    "Read 20 Pages": { 0: "Atomic Habits ch.3", 1: "Finished ch.4", 5: "Great chapter on habits stacking" },
+    "Exercise": { 0: "5km run", 1: "Gym - upper body", 3: "30 min yoga", 7: "Morning jog" },
+    "Drink 2L of Water": {},
+    "No Social Media Before Noon": { 0: "Made it to 2pm!", 5: "Deleted Twitter app" },
+  };
 
   for (const habit of insertedHabits) {
     const pattern = COMPLETION_PATTERNS[habit.name] ?? [];
+    const notes = COMPLETION_NOTES[habit.name] ?? {};
     for (const daysBack of pattern) {
       completionRows.push({
         habitId: habit.id,
         userId: DEMO_USER_ID,
         completedDate: daysAgo(daysBack),
+        note: notes[daysBack] ?? null,
       });
     }
   }

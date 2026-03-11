@@ -9,6 +9,7 @@ import {
 const toggleSchema = z.object({
   habitId: z.string().min(1),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  note: z.string().max(500).optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -37,6 +38,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  const result = await toggleCompletion(userId, parsed.data.habitId, parsed.data.date);
+  const result = await toggleCompletion(userId, parsed.data.habitId, parsed.data.date, parsed.data.note);
   return NextResponse.json(result);
 }

@@ -3,11 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getHabitsByUser, createHabit } from "@/lib/repositories/habits";
 
+const validDays = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+
 const createSchema = z.object({
   name: z.string().min(1).max(100),
   description: z.string().max(500).optional(),
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
   icon: z.string().max(4).optional(),
+  targetDays: z.array(z.enum(validDays)).min(1).optional(),
 });
 
 export async function GET() {

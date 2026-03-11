@@ -7,11 +7,14 @@ import {
   archiveHabit,
 } from "@/lib/repositories/habits";
 
+const validDays = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+
 const updateSchema = z.object({
   name: z.string().min(1).max(100).optional(),
   description: z.string().max(500).optional(),
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
   icon: z.string().max(4).optional(),
+  targetDays: z.array(z.enum(validDays)).min(1).optional(),
 });
 
 export async function GET(
