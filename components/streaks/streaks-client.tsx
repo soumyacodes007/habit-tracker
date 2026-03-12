@@ -93,9 +93,9 @@ function Sparkline({ data, color }: { data: boolean[]; color: string }) {
           y={done ? 0 : H * 0.45}
           width={W}
           height={done ? H : H * 0.55}
-          rx="1.5"
+          rx="1"
           fill={color}
-          fillOpacity={done ? 0.85 : 0.12}
+          fillOpacity={done ? 0.9 : 0.08}
         />
       ))}
     </svg>
@@ -145,19 +145,13 @@ function StreakCard({ data, rank, onSelect }: { data: HabitStreakData; rank: num
       onMouseLeave={() => setHovered(false)}
       onClick={onSelect}
       className={[
-        "relative group flex flex-col gap-0 rounded-2xl overflow-hidden bg-white cursor-pointer",
-        "border transition-all duration-200",
+        "relative group flex flex-col gap-0 rounded-[20px] bg-white cursor-pointer",
+        "border transition-all duration-300 transform-gpu",
         hovered
-          ? "border-[rgba(55,50,47,0.20)] shadow-[0_8px_28px_rgba(55,50,47,0.13)]"
-          : "border-[rgba(55,50,47,0.09)] shadow-[0_1px_4px_rgba(55,50,47,0.06)]",
-        "transform-gpu",
+          ? "border-[rgba(55,50,47,0.12)] shadow-[0_12px_40px_rgba(55,50,47,0.08)] -translate-y-[2px]"
+          : "border-[rgba(55,50,47,0.06)] shadow-[0_4px_24px_rgba(55,50,47,0.04)] translate-y-0",
       ].join(" ")}
-      style={{
-        transform: hovered ? "translateY(-2px)" : "translateY(0)",
-      }}
     >
-      {/* Color band at top */}
-      <div className="h-1 w-full" style={{ backgroundColor: habit.color }} />
 
       {/* Card body */}
       <div className="p-5 flex flex-col gap-4">
@@ -165,26 +159,22 @@ function StreakCard({ data, rank, onSelect }: { data: HabitStreakData; rank: num
         <div className="flex items-center gap-3">
           {/* Icon */}
           <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-[14px] font-semibold flex-shrink-0 transition-transform duration-200"
+            className="w-[42px] h-[42px] rounded-xl flex items-center justify-center text-white text-[16px] font-semibold flex-shrink-0 transition-transform duration-300 shadow-sm"
             style={{
               backgroundColor: habit.color,
-              transform: hovered ? "scale(1.07)" : "scale(1)",
+              transform: hovered ? "scale(1.05)" : "scale(1)",
             }}
           >
             {habit.icon || habit.name.charAt(0).toUpperCase()}
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <p className="text-[14.5px] font-semibold text-[#37322F] leading-tight truncate">{habit.name}</p>
-              {isLongestActive && currentStreak > 0 && (
-                <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: `${habit.color}18`, color: habit.color }}>
-                  Best
-                </span>
-              )}
-            </div>
+          <div className="flex-1 min-w-0 flex flex-col justify-center">
+            <p className="text-[14px] uppercase tracking-wide font-semibold text-[#37322F] leading-tight truncate">
+              {habit.name}
+            </p>
             {habit.description && (
-              <p className="text-[11.5px] text-[rgba(55,50,47,0.40)] mt-0.5 truncate">{habit.description}</p>
+              <p className="text-[10px] uppercase tracking-wider text-[rgba(55,50,47,0.40)] mt-0.5 truncate">
+                {habit.description}
+              </p>
             )}
           </div>
           {/* Status dot */}
@@ -195,15 +185,14 @@ function StreakCard({ data, rank, onSelect }: { data: HabitStreakData; rank: num
           />
         </div>
 
-        {/* Main streak numbers */}
-        <div className="flex items-stretch gap-4">
+        <div className="flex items-end gap-5 py-2">
           {/* Current streak */}
           <div className="flex-1">
-            <div className="flex items-center gap-1.5 mb-0.5">
-              {currentStreak > 0 && <FlameIcon color={isOnFire ? "#f97316" : "rgba(55,50,47,0.35)"} />}
+            <div className="flex items-center gap-1.5 mb-1">
+              {currentStreak > 0 && <FlameIcon color={isOnFire ? "#f97316" : habit.color} />}
               <span
-                className="text-[36px] font-normal leading-none tabular-nums text-[#37322F]"
-                style={{ fontFamily: "var(--font-instrument-serif), Georgia, serif" }}
+                className="text-[40px] font-normal leading-none tabular-nums"
+                style={{ fontFamily: "var(--font-instrument-serif), Georgia, serif", color: currentStreak > 0 ? "#37322F" : "rgba(55,50,47,0.30)" }}
               >
                 {currentStreak}
               </span>
@@ -215,37 +204,37 @@ function StreakCard({ data, rank, onSelect }: { data: HabitStreakData; rank: num
             </p>
           </div>
 
-          <div className="w-px bg-[rgba(55,50,47,0.07)] self-stretch" />
+          <div className="w-px h-10 bg-[rgba(55,50,47,0.06)] self-end mb-1" />
 
           {/* Longest streak */}
           <div className="flex-1">
             <span
-              className="text-[36px] font-normal leading-none tabular-nums text-[rgba(55,50,47,0.45)]"
+              className="text-[40px] font-normal leading-none tabular-nums text-[rgba(55,50,47,0.35)]"
               style={{ fontFamily: "var(--font-instrument-serif), Georgia, serif" }}
             >
               {longestStreak}
             </span>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[rgba(55,50,47,0.38)] mt-0.5">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[rgba(55,50,47,0.38)] mt-1">
               Personal best
             </p>
           </div>
 
-          <div className="w-px bg-[rgba(55,50,47,0.07)] self-stretch" />
+          <div className="w-px h-10 bg-[rgba(55,50,47,0.06)] self-end mb-1" />
 
           {/* Completion rate arc */}
-          <div className="flex flex-col items-center justify-center gap-0.5">
+          <div className="flex flex-col items-center justify-end gap-1.5 pb-0.5">
             <div className="relative">
               <RateArc rate={completionRate} color={habit.color} />
-              <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-[#37322F]">
+              <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-[#37322F]">
                 {completionRate}%
               </span>
             </div>
-            <p className="text-[9px] font-semibold uppercase tracking-wider text-[rgba(55,50,47,0.35)]">Rate</p>
+            <p className="text-[9px] font-semibold uppercase tracking-widest text-[rgba(55,50,47,0.35)]">Rate</p>
           </div>
         </div>
 
         {/* Sparkline */}
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2 mt-1">
           <div className="flex items-center justify-between">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-[rgba(55,50,47,0.35)]">Last 30 days</p>
             <p className="text-[10px] text-[rgba(55,50,47,0.38)] tabular-nums">
