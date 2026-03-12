@@ -33,25 +33,25 @@ export function Sidebar() {
     <>
       {/* Mobile Header with Menu Button */}
       <header className="md:hidden sticky top-0 z-50 border-b border-orange-200 dark:border-stone-700 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-stone-900 dark:to-stone-800 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex items-center justify-between px-3 sm:px-4 py-3 sm:py-4">
+        <div className="flex items-center justify-between px-4 py-3">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 dark:from-orange-600 dark:to-red-700 text-white shadow-md">
-              <span className="text-base sm:text-lg font-bold">H</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 dark:from-orange-600 dark:to-red-700 text-white shadow-md">
+              <span className="text-sm font-bold">H</span>
             </div>
-            <span className="font-bold text-orange-900 dark:text-stone-100 text-sm sm:text-base">Habitat</span>
+            <span className="font-bold text-orange-900 dark:text-stone-100 text-sm">Habitat</span>
           </Link>
           
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-2">
             <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-1.5 sm:p-2 rounded-lg hover:bg-orange-100 dark:hover:bg-stone-700 transition-colors"
+              className="p-2 rounded-lg hover:bg-orange-100 dark:hover:bg-stone-700 transition-colors"
               aria-label="Toggle menu"
             >
               {isOpen ? (
-                <X className="h-5 w-5 sm:h-6 sm:w-6 text-orange-900 dark:text-stone-100" />
+                <X className="h-5 w-5 text-orange-900 dark:text-stone-100" />
               ) : (
-                <Menu className="h-5 w-5 sm:h-6 sm:w-6 text-orange-900 dark:text-stone-100" />
+                <Menu className="h-5 w-5 text-orange-900 dark:text-stone-100" />
               )}
             </button>
           </div>
@@ -74,31 +74,30 @@ export function Sidebar() {
           border-r border-orange-200 dark:border-stone-700
           
           ${/* Mobile */ ''}
+          w-64
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-          w-64 sm:w-72
           
-          ${/* Tablet */ ''}
+          ${/* Tablet and up */ ''}
           md:translate-x-0
           ${isCollapsed ? 'md:w-16' : 'md:w-64'}
           
           ${/* Desktop */ ''}
-          lg:translate-x-0
           ${isCollapsed ? 'lg:w-16' : 'lg:w-72'}
           
           ${/* Large Desktop */ ''}
-          xl:${isCollapsed ? 'w-20' : 'w-80'}
+          ${isCollapsed ? 'xl:w-20' : 'xl:w-80'}
         `}
       >
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-orange-200 dark:border-stone-700">
-          <Link href="/" className="flex items-center gap-2 sm:gap-3" onClick={() => setIsOpen(false)}>
-            <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 dark:from-orange-600 dark:to-red-700 text-white shadow-lg flex-shrink-0">
-              <span className="text-lg sm:text-xl font-bold">H</span>
+        <div className="flex items-center justify-between p-4 border-b border-orange-200 dark:border-stone-700">
+          <Link href="/" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 dark:from-orange-600 dark:to-red-700 text-white shadow-lg flex-shrink-0">
+              <span className="text-lg font-bold">H</span>
             </div>
             {!isCollapsed && (
-              <div className="md:block">
-                <span className="font-bold text-base sm:text-lg text-orange-900 dark:text-stone-100 block">Habitat</span>
-                <span className="text-xs text-orange-600 dark:text-stone-400 hidden sm:block">Track your journey</span>
+              <div className="block">
+                <span className="font-bold text-lg text-orange-900 dark:text-stone-100 block">Habitat</span>
+                <span className="text-xs text-orange-600 dark:text-stone-400">Track your journey</span>
               </div>
             )}
           </Link>
@@ -106,13 +105,13 @@ export function Sidebar() {
           {/* Desktop Collapse Button */}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden md:flex p-1 sm:p-2 rounded-lg hover:bg-orange-100 dark:hover:bg-stone-700 transition-colors"
+            className="hidden md:flex p-2 rounded-lg hover:bg-orange-100 dark:hover:bg-stone-700 transition-colors"
             aria-label="Toggle sidebar"
           >
             {isCollapsed ? (
-              <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-orange-900 dark:text-stone-100" />
+              <ChevronRight className="h-4 w-4 text-orange-900 dark:text-stone-100" />
             ) : (
-              <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 text-orange-900 dark:text-stone-100" />
+              <ChevronLeft className="h-4 w-4 text-orange-900 dark:text-stone-100" />
             )}
           </button>
         </div>
@@ -147,10 +146,10 @@ export function Sidebar() {
         </nav>
 
         {/* Desktop Theme Toggle */}
-        <div className="hidden md:block absolute bottom-4 sm:bottom-6 left-2 sm:left-4 right-2 sm:right-4">
-          <div className={`p-2 sm:p-4 rounded-lg bg-orange-100 dark:bg-stone-800 border border-orange-200 dark:border-stone-700 ${isCollapsed ? 'px-1 sm:px-2' : ''}`}>
+        <div className="hidden md:block absolute bottom-6 left-4 right-4">
+          <div className={`p-4 rounded-lg bg-orange-100 dark:bg-stone-800 border border-orange-200 dark:border-stone-700 ${isCollapsed ? 'px-2' : ''}`}>
             <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
-              {!isCollapsed && <span className="text-xs sm:text-sm font-medium text-orange-900 dark:text-stone-100">Theme</span>}
+              {!isCollapsed && <span className="text-sm font-medium text-orange-900 dark:text-stone-100">Theme</span>}
               <ThemeToggle />
             </div>
           </div>

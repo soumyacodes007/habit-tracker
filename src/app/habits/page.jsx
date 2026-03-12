@@ -86,19 +86,19 @@ export default function HabitsPage() {
     <div className="min-h-screen bg-background flex">
       <Sidebar />
       
-      <main className="flex-1 px-3 py-4 sm:px-4 sm:py-6 md:px-6 md:py-8 lg:px-8 overflow-x-hidden">
+      <main className="flex-1 px-4 py-4 md:px-6 md:py-6 lg:px-8 lg:py-8 overflow-x-hidden">
         <div className="mx-auto max-w-7xl">
-        <div className="space-y-8">
+        <div className="space-y-6">
          
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-2">
               Choose a Habit
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground">
               Select a habit category to start building your routine
             </p>
           </div>        
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {habitCategories.map((category) => {
               const Icon = category.icon
               return (

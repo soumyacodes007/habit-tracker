@@ -22,19 +22,19 @@ export default function JournalPage() {
   return (
     <div className="min-h-screen bg-background flex">
       <Sidebar />
-      <main className="flex-1 px-3 py-4 sm:px-4 sm:py-6 md:px-6 md:py-8 lg:px-8 overflow-x-hidden">
+      <main className="flex-1 px-4 py-4 md:px-6 md:py-6 lg:px-8 lg:py-8 overflow-x-hidden">
         <div className="mx-auto max-w-7xl">
-        <div className="space-y-8">
+        <div className="space-y-6">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-2">
               My Journal
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground">
               Track your thoughts, emotions, and progress
             </p>
           </div>
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <div className="space-y-8 lg:col-span-2">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="space-y-6 lg:col-span-2">
               <Card className="p-6 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 border-orange-200 dark:border-orange-900/50">
                 <div className="mb-4">
                   <h2 className="text-2xl font-bold text-orange-900 dark:text-orange-100">
