@@ -109,11 +109,11 @@ export function Sidebar() {
           <div className="flex items-center justify-between p-4 border-b border-orange-200 dark:border-stone-700">
             <Link href="/" className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-lg">
-                <span className="text-lg font-bold">H</span>
+                <span className="text-lg font-bold">J</span>
               </div>
               {!isCollapsed && (
                 <div>
-                  <span className="font-bold text-lg text-orange-900 dark:text-stone-100 block">Habitat</span>
+                  <span className="font-bold text-lg text-orange-900 dark:text-stone-100 block">JOURN-I</span>
                   <span className="text-xs text-orange-600 dark:text-stone-400">Track your journey</span>
                 </div>
               )}
