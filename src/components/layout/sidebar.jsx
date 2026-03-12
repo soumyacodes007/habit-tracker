@@ -39,7 +39,7 @@ export function Sidebar() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 text-white">
                 <span className="text-sm font-bold">H</span>
               </div>
-              <span className="font-bold text-orange-900 dark:text-stone-100">Habitat</span>
+              <span className="font-bold text-orange-900 dark:text-stone-100">JOURN-I</span>
             </Link>
             
             <div className="flex items-center gap-2">

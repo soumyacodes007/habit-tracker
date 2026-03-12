@@ -1,20 +1,20 @@
 'use client'
+
 import { Sidebar } from '@/components/layout/sidebar.jsx'
-import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import Link from 'next/link'
 import {
   Dumbbell,
   Brain,
   BookOpen,
   PenTool,
   Heart,
-  Palette,
+  Zap,
   Music,
   Camera,
   Settings,
   ChevronRight,
 } from 'lucide-react'
+
 const habitCategories = [
   {
     id: '1',
@@ -53,9 +53,9 @@ const habitCategories = [
   },
   {
     id: '6',
-    name: 'Doodling',
-    description: 'Painting and colouring',
-    icon: Palette,
+    name: 'Energy',
+    description: 'Productivity and focus',
+    icon: Zap,
     color: 'bg-yellow-400',
   },
   {
@@ -79,79 +79,78 @@ const habitCategories = [
     icon: Settings,
     color: 'bg-indigo-500',
   },
-
 ]
+
 export default function HabitsPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 dark:from-stone-900 dark:to-stone-800">
       <Sidebar />
-      
-      <main className="md:ml-64 px-4 py-4 md:px-6 md:py-6">
-        <div className="mx-auto max-w-7xl">
-        <div className="space-y-6">
-         
-          <div>
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-2">
-              Choose a Habit
-            </h1>
-            <p className="text-sm md:text-base text-muted-foreground">
-              Select a habit category to start building your routine
-            </p>
-          </div>        
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {habitCategories.map((category) => {
-              const Icon = category.icon
-              return (
-                <Card
-                  key={category.id}
-                  className={`overflow-hidden hover:shadow-xl transition-all duration-300 border-orange-200 dark:border-orange-900/50 hover:scale-105
-  ${category.id === habitCategories[habitCategories.length - 1].id
-                      ? "xl:col-start-2 xl:translate-x-1/2"
-                      : ""
-                    }`}
-                >
-                  <div className={`${category.color} h-32 flex items-center justify-center`}>
-                    <Icon className="h-16 w-16 text-white" />
+      <main className="md:ml-64 px-4 py-6 md:px-6 md:py-8 pb-8">
+        <div className="mx-auto max-w-4xl">
+          <div className="space-y-6">
+            {/* Page Header */}
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Choose a Habit
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300">
+                Select a habit category to start building your routine
+              </p>
+            </div>
+
+            {/* Habits Grid */}
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+              {habitCategories.map((category) => {
+                const Icon = category.icon
+                return (
+                  <div
+                    key={category.id}
+                    className="bg-white dark:bg-stone-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-orange-100 dark:border-stone-700"
+                  >
+                    <div className={`${category.color} h-20 md:h-24 flex items-center justify-center`}>
+                      <Icon className="h-10 w-10 md:h-12 md:w-12 text-white" />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 dark:text-white text-sm md:text-base">{category.name}</h3>
+                      <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300 mt-1">{category.description}</p>
+                      <Button
+                        variant="outline"
+                        className="mt-3 w-full text-xs md:text-sm rounded-full border-orange-200 dark:border-stone-600 hover:bg-orange-50 dark:hover:bg-stone-700"
+                      >
+                        <span>Add Habit</span>
+                        <ChevronRight className="ml-2 h-3 w-3 md:h-4 md:w-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-foreground">{category.name}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{category.description}</p>
-                    <Button
-                      variant="outline"
-                      className="mt-4 w-full"
-                    >
-                      <span>Add Habit</span>
-                      <ChevronRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </Card>
-              )
-            })}
+                )
+              })}
+            </div>
+
+            {/* Info Section */}
+            <div className="bg-white dark:bg-stone-800 rounded-3xl p-6 shadow-lg border border-orange-100 dark:border-stone-700">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Tips for Building Habits
+              </h2>
+              <ul className="space-y-3 text-gray-700 dark:text-gray-300">
+                <li className="flex gap-3">
+                  <span className="font-bold text-orange-600 dark:text-orange-400">1.</span>
+                  <span>Start small and be consistent with your habits</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="font-bold text-orange-600 dark:text-orange-400">2.</span>
+                  <span>Track your progress daily to stay motivated</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="font-bold text-orange-600 dark:text-orange-400">3.</span>
+                  <span>Combine habits with activities you already do</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="font-bold text-orange-600 dark:text-orange-400">4.</span>
+                  <span>Celebrate your streaks and milestones</span>
+                </li>
+              </ul>
+            </div>
           </div>
-          <Card className="p-6 sm:p-8 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-900/50">
-            <h2 className="text-xl font-semibold text-amber-900 dark:text-amber-100 mb-3">
-              Tips for Building Habits
-            </h2>
-            <ul className="space-y-2 text-amber-800 dark:text-amber-200">
-              <li className="flex gap-3">
-                <span className="font-bold text-orange-600 dark:text-orange-400">1.</span>
-                <span>Start small and be consistent with your habits</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="font-bold text-orange-600 dark:text-orange-400">2.</span>
-                <span>Track your progress daily to stay motivated</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="font-bold text-orange-600 dark:text-orange-400">3.</span>
-                <span>Combine habits with activities you already do</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="font-bold text-orange-600 dark:text-orange-400">4.</span>
-                <span>Celebrate your streaks and milestones</span>
-              </li>
-            </ul>
-          </Card>
-        </div>
         </div>
       </main>
     </div>
