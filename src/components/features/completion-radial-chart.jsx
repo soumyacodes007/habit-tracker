@@ -2,11 +2,9 @@
 
 import { Card } from '@/components/ui/card'
 import { RadialBarChart, RadialBar, Legend, ResponsiveContainer, PolarAngleAxis } from 'recharts'
-
 const defaultData = [
   { name: 'Completed', value: 75, fill: '#F59E0B' },
 ]
-
 export function CompletionRadialChart({ 
   percentage = 75, 
   title = 'Today\'s Completion',
@@ -15,7 +13,6 @@ export function CompletionRadialChart({
   const data = [
     { name: 'Completed', value: percentage, fill: '#F59E0B' },
   ]
-
   return (
     <Card className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-900/50">
       <h3 className="mb-2 text-lg font-semibold text-amber-900 dark:text-amber-100">{title}</h3>

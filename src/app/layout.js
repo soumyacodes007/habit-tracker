@@ -1,10 +1,8 @@
 import { Geist, Geist_Mono } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider.jsx'
 import './globals.css'
-
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
-
 export const metadata = {
   title: 'Wellness Tracker',
   description: 'Track your habits and journal your wellness journey',
@@ -32,7 +30,6 @@ export const metadata = {
     apple: '/apple-icon.png',
   },
 }
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -40,7 +37,6 @@ export default function RootLayout({ children }) {
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {children}
         </ThemeProvider>
-        
       </body>
     </html>
   )

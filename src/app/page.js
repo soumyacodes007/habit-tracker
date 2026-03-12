@@ -12,9 +12,7 @@ import { HabitProgressChart } from '@/components/features/habit-progress-chart.j
 import { StreakBarChart } from '@/components/features/streak-bar-chart.jsx'
 import { EmotionPieChart } from '@/components/features/emotion-pie-chart.jsx'
 import { CompletionRadialChart } from '@/components/features/completion-radial-chart.jsx'
-
 import { Dumbbell, Brain, BookOpen, PenTool, Bike,HandHeart } from 'lucide-react'
-
 const habits = [
   {
     id: '1',
@@ -65,23 +63,16 @@ const habits = [
     color: 'bg-rose-400',
   },
 ]
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-background flex">
       <Sidebar />
-      
       <main className="flex-1 px-4 py-8 sm:px-6 lg:px-8 overflow-x-hidden">
         <div className="mx-auto max-w-7xl">
         <div className="space-y-8">
-          {/* Welcome Section */}
           <WelcomeSection />
-
-          {/* Statistics */}
           <StatisticsPanel />
           <DailyHabitChecklist />
-
-          {/* Calendar with Emotions - Full Width Featured Section */}
           <section>
             <h2 className="mb-4 text-2xl font-bold text-foreground">Your Journey</h2>
             <CalendarWithEmotions
@@ -98,12 +89,8 @@ export default function Home() {
               }}
             />
           </section>
-
-          {/* Main Content Grid */}
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            {/* Left Column - Habits and Timer */}
             <div className="space-y-8 lg:col-span-3">
-              {/* Habits Grid */}
               <div>
                 <h2 className="mb-4 text-2xl font-bold text-foreground">Today's Habits</h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -115,21 +102,15 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-
-              {/* Charts Section */}
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 <HabitProgressChart />
                 <StreakBarChart />
               </div>
-
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 <EmotionPieChart />
                 <CompletionRadialChart percentage={68} />
               </div>
-
               <TimerWidget />
-
-              {/* Emotion Tracker */}
               <EmotionTracker />
             </div>
           </div>

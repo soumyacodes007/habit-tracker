@@ -4,12 +4,10 @@ import { Card } from '@/components/ui/card'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useState, useEffect } from 'react'
-
 export function CalendarWidget({ month: initialMonth, year: initialYear }) {
   const [mounted, setMounted] = useState(false)
   const [today, setToday] = useState(null)
   const [currentDate, setCurrentDate] = useState(null)
-
   useEffect(() => {
     const todayDate = new Date()
     setToday(todayDate)
@@ -18,7 +16,6 @@ export function CalendarWidget({ month: initialMonth, year: initialYear }) {
     )
     setMounted(true)
   }, [])
-
   if (!mounted || !today || !currentDate) {
     return (
       <Card className="p-4 sm:p-6">
@@ -26,24 +23,18 @@ export function CalendarWidget({ month: initialMonth, year: initialYear }) {
       </Card>
     )
   }
-
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate()
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay()
-
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1)
   const previousMonthDays = Array.from({ length: firstDayOfMonth }, (_, i) => null)
-
   const handlePreviousMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))
   }
-
   const handleNextMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))
   }
-
   return (
     <Card className="p-4 sm:p-6">
       <div className="mb-4 flex items-center justify-between">
@@ -69,24 +60,20 @@ export function CalendarWidget({ month: initialMonth, year: initialYear }) {
           </Button>
         </div>
       </div>
-
       <div className="grid gap-1">
         {dayNames.map((day) => (
           <div key={day} className="text-center text-xs font-semibold text-muted-foreground py-2">
             {day}
           </div>
         ))}
-
         {previousMonthDays.map((_, i) => (
           <div key={`prev-${i}`} className="aspect-square" />
         ))}
-
         {days.map((day) => {
           const isToday = 
             day === today.getDate() &&
             currentDate.getMonth() === today.getMonth() &&
             currentDate.getFullYear() === today.getFullYear()
-
           return (
             <button
               key={day}

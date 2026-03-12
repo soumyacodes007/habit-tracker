@@ -1,5 +1,4 @@
 'use client'
-
 import { Sidebar } from '@/components/layout/sidebar.jsx'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -16,7 +15,6 @@ import {
   Settings,
   ChevronRight,
 } from 'lucide-react'
-
 const habitCategories = [
   {
     id: '1',
@@ -83,7 +81,6 @@ const habitCategories = [
   },
 
 ]
-
 export default function HabitsPage() {
   return (
     <div className="min-h-screen bg-background flex">
@@ -92,7 +89,7 @@ export default function HabitsPage() {
       <main className="flex-1 px-4 py-8 sm:px-6 lg:px-8 overflow-x-hidden">
         <div className="mx-auto max-w-7xl">
         <div className="space-y-8">
-          {/* Page Header */}
+         
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
               Choose a Habit
@@ -100,9 +97,7 @@ export default function HabitsPage() {
             <p className="text-muted-foreground">
               Select a habit category to start building your routine
             </p>
-          </div>
-
-          {/* Habits Grid */}
+          </div>        
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {habitCategories.map((category) => {
               const Icon = category.icon
@@ -130,12 +125,9 @@ export default function HabitsPage() {
                     </Button>
                   </div>
                 </Card>
-
               )
             })}
           </div>
-
-          {/* Info Section */}
           <Card className="p-6 sm:p-8 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-900/50">
             <h2 className="text-xl font-semibold text-amber-900 dark:text-amber-100 mb-3">
               Tips for Building Habits

@@ -1,9 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
-
 @custom-variant dark (&:is(.dark *));
-
 :root {
   --background: #FFF8F0;
   --foreground: #2D1B0E;
@@ -39,7 +37,6 @@
   --sidebar-border: #FDE68A;
   --sidebar-ring: #F59E0B;
 }
-
 .dark {
   --background: #0F0A07;
   --foreground: #F5F1EB;
@@ -74,7 +71,6 @@
   --sidebar-border: #3D2817;
   --sidebar-ring: #D97706;
 }
-
 @theme inline {
   --font-sans: 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
@@ -115,7 +111,6 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
-
 @layer base {
   * {
     @apply border-border outline-ring/50;

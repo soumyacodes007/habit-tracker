@@ -10,26 +10,21 @@ import { EmotionStatsCard } from '@/components/features/emotion-stats-card.jsx'
 import { WeeklyActivityChart } from '@/components/features/weekly-activity-chart.jsx'
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-
 export default function JournalPage() {
   const [journalEntry, setJournalEntry] = useState('')
   const [selectedDate, setSelectedDate] = useState(new Date())
-
   const handleSave = () => {
     if (journalEntry.trim()) {
       console.log('[v0] Saving journal entry:', journalEntry)
       setJournalEntry('')
     }
   }
-
   return (
     <div className="min-h-screen bg-background flex">
       <Sidebar />
-      
       <main className="flex-1 px-4 py-8 sm:px-6 lg:px-8 overflow-x-hidden">
         <div className="mx-auto max-w-7xl">
         <div className="space-y-8">
-          {/* Page Header */}
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
               My Journal
@@ -38,12 +33,8 @@ export default function JournalPage() {
               Track your thoughts, emotions, and progress
             </p>
           </div>
-
-          {/* Main Content Grid */}
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            {/* Left Column - Journal Entry and Emotions */}
             <div className="space-y-8 lg:col-span-2">
-              {/* Entry Title */}
               <Card className="p-6 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 border-orange-200 dark:border-orange-900/50">
                 <div className="mb-4">
                   <h2 className="text-2xl font-bold text-orange-900 dark:text-orange-100">
@@ -58,13 +49,9 @@ export default function JournalPage() {
                     Celebrate what made you smile today.
                   </p>
                 </div>
-
-                {/* Entry Count */}
                 <div className="text-3xl font-bold text-amber-700 dark:text-amber-300 mb-6">420</div>
                 <p className="text-sm text-orange-600 dark:text-orange-400">entries created</p>
               </Card>
-
-              {/* Journal Entry Form */}
               <Card className="p-6">
                 <h3 className="font-semibold text-foreground mb-4">Create New Entry</h3>
                 <div className="space-y-4">
@@ -91,22 +78,12 @@ export default function JournalPage() {
                   </div>
                 </div>
               </Card>
-
-              {/* Emotion Tracker */}
               <EmotionTracker />
-
-              {/* Emotion Stats */}
               <EmotionStatsCard />
-
-              {/* Weekly Activity Chart */}
               <WeeklyActivityChart />
             </div>
-
-            {/* Right Column - Calendar */}
             <div className="space-y-8">
               <CalendarWidget />
-
-              {/* Quick Stats */}
               <Card className="p-6 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-950/20 dark:to-yellow-950/20 border-amber-200 dark:border-amber-900/50">
                 <h3 className="font-semibold text-amber-900 dark:text-amber-100 mb-4">Quick Stats</h3>
                 <div className="space-y-4">
