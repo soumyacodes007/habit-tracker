@@ -41,10 +41,10 @@ const SmartSimpleBrilliant: React.FC<SmartSimpleBrilliantProps> = ({
         } as React.CSSProperties)
 
   // Figma-exported SVG assets used for small icons
-  const img = "http://localhost:3845/assets/1b1e60b441119fb176db990a3c7fe2670a764855.svg"
-  const img1 = "http://localhost:3845/assets/a502f04ccfc3811f304b58a3a982a5b6fa070e91.svg"
-  const img2 = "http://localhost:3845/assets/9c07375bf3b9f1f1d8a0a24447829eb6f54fa928.svg"
-  const img3 = "http://localhost:3845/assets/19500d66798ef5ea9dc9d5f971cd0e9c29674bd3.svg"
+  const img = ""
+  const img1 = ""
+  const img2 = ""
+  const img3 = ""
 
   return (
     <div

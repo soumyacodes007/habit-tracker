@@ -11,6 +11,11 @@
       "sourceType": "github",
       "computedHash": "dd47be182d7ca52c2e6b0d4f91cfe8f32409714f677757fc5559b393fb6bad5b"
     },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "computedHash": "516bd2154eb843a8240e43d5b285229129853114ad7075a5e141e1c08e408c84"
+    },
     "nextjs-app-router-patterns": {
       "source": "wshobson/agents",
       "sourceType": "github",
