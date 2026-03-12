@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import HabitDetailPanel from "./habit-detail-panel"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -25,6 +26,7 @@ interface HabitStreakData {
   isTrendingUp: boolean
   isTrendingDown: boolean
   completedToday: boolean
+  allDates: string[]
 }
 
 interface StreaksClientProps {
@@ -130,7 +132,7 @@ function RateArc({ rate, color }: { rate: number; color: string }) {
 
 // ─── Streak Card ─────────────────────────────────────────────────────────────
 
-function StreakCard({ data, rank }: { data: HabitStreakData; rank: number }) {
+function StreakCard({ data, rank, onSelect }: { data: HabitStreakData; rank: number; onSelect: () => void }) {
   const [hovered, setHovered] = useState(false)
   const { habit, currentStreak, longestStreak, last30, totalCompletions, completionRate, isTrendingUp, isTrendingDown, completedToday } = data
 
@@ -141,8 +143,9 @@ function StreakCard({ data, rank }: { data: HabitStreakData; rank: number }) {
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={onSelect}
       className={[
-        "relative group flex flex-col gap-0 rounded-2xl overflow-hidden bg-white",
+        "relative group flex flex-col gap-0 rounded-2xl overflow-hidden bg-white cursor-pointer",
         "border transition-all duration-200",
         hovered
           ? "border-[rgba(55,50,47,0.20)] shadow-[0_8px_28px_rgba(55,50,47,0.13)]"
@@ -281,6 +284,8 @@ function StreakCard({ data, rank }: { data: HabitStreakData; rank: number }) {
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function StreaksClient({ habitData, today }: StreaksClientProps) {
+  const [selectedHabit, setSelectedHabit] = useState<HabitStreakData | null>(null)
+
   // Aggregate stats
   const totalActive = habitData.filter((d) => d.currentStreak > 0).length
   const highestStreak = habitData.reduce((m, d) => Math.max(m, d.currentStreak), 0)
@@ -331,11 +336,25 @@ export default function StreaksClient({ habitData, today }: StreaksClientProps) 
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {habitData.map((data, i) => (
-              <StreakCard key={data.habit.id} data={data} rank={i + 1} />
+              <StreakCard
+                key={data.habit.id}
+                data={data}
+                rank={i + 1}
+                onSelect={() => setSelectedHabit(data)}
+              />
             ))}
           </div>
         )}
       </div>
+
+      {/* Detail panel */}
+      {selectedHabit && (
+        <HabitDetailPanel
+          data={selectedHabit}
+          today={today}
+          onClose={() => setSelectedHabit(null)}
+        />
+      )}
     </div>
   )
 }

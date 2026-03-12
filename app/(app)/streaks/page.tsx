@@ -67,6 +67,7 @@ export default async function StreaksPage() {
       isTrendingUp,
       isTrendingDown,
       completedToday: allSet.has(todayStr),
+      allDates: all, // sorted YYYY-MM-DD strings for the heatmap
     }
   })
 
