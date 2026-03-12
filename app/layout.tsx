@@ -1,6 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Inter, Instrument_Serif } from "next/font/google"
+import { ClerkProvider } from "@clerk/nextjs"
 import "./globals.css"
 
 const inter = Inter({
@@ -19,9 +20,9 @@ const instrumentSerif = Instrument_Serif({
 })
 
 export const metadata: Metadata = {
-  title: "Brillance - Effortless Custom Contract Billing",
+  title: "DailyRoutine — Journal, Habits & Streaks",
   description:
-    "Streamline your billing process with seamless automation for every custom contract, tailored by Brillance.",
+    "A high-utility personal productivity and reflection tool. Journal daily, track habits, and build streaks.",
   generator: 'v0.app'
 }
 
@@ -41,7 +42,14 @@ export default function RootLayout({
         />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:wght@400&display=swap" />
       </head>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <ClerkProvider
+          signInFallbackRedirectUrl="/journal"
+          signUpFallbackRedirectUrl="/journal"
+        >
+          {children}
+        </ClerkProvider>
+      </body>
     </html>
   )
 }
