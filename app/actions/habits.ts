@@ -53,7 +53,8 @@ export async function createHabitAction(formData: FormData) {
   }
 
   const habit = await createHabit(userId, parsed.data);
-  revalidatePath("/dashboard");
+  revalidatePath("/habits");
+  revalidatePath("/habits/manage");
   return { data: habit };
 }
 
@@ -86,7 +87,8 @@ export async function updateHabitAction(habitId: string, formData: FormData) {
   const habit = await updateHabit(userId, habitId, parsed.data);
   if (!habit) return { error: "Habit not found" };
 
-  revalidatePath("/dashboard");
+  revalidatePath("/habits");
+  revalidatePath("/habits/manage");
   return { data: habit };
 }
 
@@ -97,6 +99,7 @@ export async function archiveHabitAction(habitId: string) {
   const habit = await archiveHabit(userId, habitId);
   if (!habit) return { error: "Habit not found" };
 
-  revalidatePath("/dashboard");
+  revalidatePath("/habits");
+  revalidatePath("/habits/manage");
   return { data: habit };
 }

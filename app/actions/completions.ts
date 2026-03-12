@@ -21,6 +21,7 @@ export async function toggleCompletionAction(habitId: string, date: string, note
   }
 
   const result = await toggleCompletion(userId, habitId, date, note);
-  revalidatePath("/dashboard");
+  revalidatePath("/habits");
+  revalidatePath("/streaks");
   return { data: result };
 }
