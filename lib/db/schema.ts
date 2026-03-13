@@ -92,6 +92,28 @@ export const journalEntries = pgTable(
   (t) => [unique("journal_user_date_unique").on(t.userId, t.date)]
 );
 
+// ─── Coach Alerts (Accountability Coach) ─────────────────────────────────────
+
+/**
+ * AI-generated accountability alerts.
+ * Agent A (Auditor) detects broken streaks → Agent B (Enforcer) crafts the message.
+ */
+export const coachAlerts = pgTable("coach_alerts", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id").notNull(),
+  habitId: text("habit_id").references(() => habits.id, { onDelete: "cascade" }),
+  habitName: text("habit_name").notNull(),
+  daysMissed: text("days_missed").notNull(), // e.g. "3"
+  message: text("message").notNull(), // AI-generated message
+  alertType: text("alert_type").notNull().default("motivate"), // "shame" | "motivate" | "warning"
+  read: text("read").notNull().default("false"), // "true" | "false"
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 // ─── Inferred Types (for repositories) ───────────────────────────────────────
 
 export type Habit = typeof habits.$inferSelect;
@@ -102,5 +124,8 @@ export type NewHabitCompletion = typeof habitCompletions.$inferInsert;
 
 export type JournalEntry = typeof journalEntries.$inferSelect;
 export type NewJournalEntry = typeof journalEntries.$inferInsert;
+
+export type CoachAlert = typeof coachAlerts.$inferSelect;
+export type NewCoachAlert = typeof coachAlerts.$inferInsert;
 
 export type Mood = "happy" | "neutral" | "sad";

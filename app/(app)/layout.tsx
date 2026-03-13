@@ -2,6 +2,7 @@ import type React from "react"
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import AppSidebar from "@/components/app-sidebar"
+import CoachAlertModal from "@/components/coach/coach-alert-modal"
 
 export default async function AppLayout({
   children,
@@ -17,6 +18,7 @@ export default async function AppLayout({
       <main className="flex-1 overflow-y-auto min-w-0">
         {children}
       </main>
+      <CoachAlertModal />
     </div>
   )
 }
