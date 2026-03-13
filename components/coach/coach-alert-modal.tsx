@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState, useTransition, useCallback } from "react"
-import { getUnreadAlertsAction, dismissAlertAction, runCoachAuditAction } from "@/app/actions/coach"
+import { useEffect, useState, useTransition } from "react"
+import { getUnreadAlertsAction, dismissAlertAction } from "@/app/actions/coach"
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -44,7 +44,7 @@ function getAlertStyle(type: string) {
   return ALERT_STYLES[type] ?? ALERT_STYLES.motivate
 }
 
-// ─── Component ───────────────────────────────────────────────────────────────
+// ─── Component (modal only — no button, triggered externally) ────────────────
 
 export default function CoachAlertModal() {
   const [alerts, setAlerts] = useState<CoachAlert[]>([])
@@ -52,53 +52,57 @@ export default function CoachAlertModal() {
   const [visible, setVisible] = useState(false)
   const [dismissing, setDismissing] = useState(false)
   const [isPending, startTransition] = useTransition()
-  const [hasRunAudit, setHasRunAudit] = useState(false)
 
-  // On mount: run audit then fetch alerts
-  const loadAlerts = useCallback(() => {
+  // Check for existing unread alerts on mount
+  useEffect(() => {
     startTransition(async () => {
-      // First run the audit to generate any new alerts
-      if (!hasRunAudit) {
-        await runCoachAuditAction()
-        setHasRunAudit(true)
-      }
-
-      // Then fetch unread alerts
       const result = await getUnreadAlertsAction()
       if (result.data && result.data.length > 0) {
         setAlerts(result.data)
         setCurrentIndex(0)
-        // Small delay for dramatic entrance
-        setTimeout(() => setVisible(true), 800)
+        setTimeout(() => setVisible(true), 500)
       }
     })
-  }, [hasRunAudit])
+  }, [])
 
+  // Listen for custom event to re-check alerts (triggered by sidebar button)
   useEffect(() => {
-    loadAlerts()
-  }, [loadAlerts])
+    const handler = () => {
+      startTransition(async () => {
+        const result = await getUnreadAlertsAction()
+        if (result.data && result.data.length > 0) {
+          setAlerts(result.data)
+          setCurrentIndex(0)
+          setTimeout(() => setVisible(true), 300)
+        }
+      })
+    }
+    window.addEventListener("coach-alerts-updated", handler)
+    return () => window.removeEventListener("coach-alerts-updated", handler)
+  }, [])
 
   const currentAlert = alerts[currentIndex]
-  if (!currentAlert || !visible) return null
-
-  const style = getAlertStyle(currentAlert.alertType)
+  const style = currentAlert ? getAlertStyle(currentAlert.alertType) : null
   const hasMore = currentIndex < alerts.length - 1
 
   const handleDismiss = () => {
+    if (!currentAlert) return
     setDismissing(true)
     startTransition(async () => {
       await dismissAlertAction(currentAlert.id)
-
       setTimeout(() => {
         setDismissing(false)
         if (hasMore) {
           setCurrentIndex((i) => i + 1)
         } else {
           setVisible(false)
+          setAlerts([])
         }
       }, 300)
     })
   }
+
+  if (!visible || !currentAlert || !style) return null
 
   return (
     <>

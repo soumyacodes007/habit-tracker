@@ -10,7 +10,11 @@ import { getJournalEntries } from "@/lib/repositories/journal";
 
 // ─── Run the full audit pipeline (Agent A → Agent B → save) ──────────────────
 
-export async function runCoachAuditAction() {
+/**
+ * force = true skips 24h spam protection (for manual "Summon The Coach" demo).
+ * force = false respects the 24h cooldown (for auto-run on page load).
+ */
+export async function runCoachAuditAction(force = false) {
   const { userId } = await auth();
   if (!userId) return { error: "Unauthorized" };
 
@@ -21,7 +25,7 @@ export async function runCoachAuditAction() {
     return { data: { generated: 0, message: "All streaks intact. You're safe… for now." } };
   }
 
-  // Get recent journal entries for Agent B context
+  // Get recent journal entries for Agent B context (with actual content)
   const journalEntries = await getJournalEntries(userId, { limit: 10 });
   const journalContext = journalEntries.map((e) => ({
     date: e.date,
@@ -32,30 +36,32 @@ export async function runCoachAuditAction() {
 
   let generated = 0;
 
-  // Agent B: Generate messages for top 3 violations (avoid spam)
+  // Agent B: Generate messages for top 3 violations
   const topViolations = violations.slice(0, 3);
 
   for (const violation of topViolations) {
-    // Check if we already alerted for this habit recently (within 24h)
-    const existing = await db
-      .select()
-      .from(coachAlerts)
-      .where(
-        and(
-          eq(coachAlerts.userId, userId),
-          eq(coachAlerts.habitId, violation.habitId)
+    if (!force) {
+      // Check if we already alerted for this habit recently (within 24h)
+      const existing = await db
+        .select()
+        .from(coachAlerts)
+        .where(
+          and(
+            eq(coachAlerts.userId, userId),
+            eq(coachAlerts.habitId, violation.habitId)
+          )
         )
-      )
-      .orderBy(desc(coachAlerts.createdAt))
-      .limit(1);
+        .orderBy(desc(coachAlerts.createdAt))
+        .limit(1);
 
-    if (existing.length > 0) {
-      const lastAlert = existing[0];
-      const hoursSince = (Date.now() - new Date(lastAlert.createdAt).getTime()) / (1000 * 60 * 60);
-      if (hoursSince < 24) continue; // Don't spam
+      if (existing.length > 0) {
+        const lastAlert = existing[0];
+        const hoursSince = (Date.now() - new Date(lastAlert.createdAt).getTime()) / (1000 * 60 * 60);
+        if (hoursSince < 24) continue;
+      }
     }
 
-    // Agent B: Craft the message
+    // Agent B: Craft the message using journal context
     const result = await craftCoachMessage(violation, journalContext);
 
     // Save to DB
