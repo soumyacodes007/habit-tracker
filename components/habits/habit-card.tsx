@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from "react"
 import { archiveHabitAction } from "@/app/actions/habits"
+import { generateDeleteWarningAction } from "@/app/actions/schrodinger"
+import SchrodingerModal from "./schrodinger-modal"
 
 interface Habit {
   id: string
@@ -31,12 +33,32 @@ const DAY_LABELS: Record<string, string> = {
 export default function HabitCard({ habit, streak, onEdit }: HabitCardProps) {
   const [showMenu, setShowMenu] = useState(false)
   const [isPending, startTransition] = useTransition()
-  const [confirmArchive, setConfirmArchive] = useState(false)
+  
+  // Schrödinger's Warning state
+  const [isGeneratingWarning, setIsGeneratingWarning] = useState(false)
+  const [schrodingerWarning, setSchrodingerWarning] = useState<any>(null)
+
+  const handleInitiateArchive = async () => {
+    setShowMenu(false)
+    setIsGeneratingWarning(true)
+    
+    // Fetch the devastating AI warning
+    try {
+      const result = await generateDeleteWarningAction(habit.id)
+      if (result.data) {
+        setSchrodingerWarning(result.data)
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setIsGeneratingWarning(false)
+    }
+  }
 
   const handleArchive = () => {
     startTransition(async () => {
       await archiveHabitAction(habit.id)
-      setConfirmArchive(false)
+      setSchrodingerWarning(null)
     })
   }
 
@@ -97,7 +119,7 @@ export default function HabitCard({ habit, streak, onEdit }: HabitCardProps) {
                   Edit habit
                 </button>
                 <button
-                  onClick={() => { setConfirmArchive(true); setShowMenu(false) }}
+                  onClick={handleInitiateArchive}
                   className="w-full text-left px-3 py-1.5 text-[12.5px] text-rose-500 hover:bg-rose-50 transition-colors"
                 >
                   Archive
@@ -146,25 +168,30 @@ export default function HabitCard({ habit, streak, onEdit }: HabitCardProps) {
         </div>
       )}
 
-      {/* Archive confirmation */}
-      {confirmArchive && (
+      {/* Schrödinger's Generating Overlay */}
+      {isGeneratingWarning && (
         <>
-          <div className="fixed inset-0 z-50 bg-black/15 backdrop-blur-[1px]" onClick={() => setConfirmArchive(false)} />
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-xl p-5 w-full max-w-[320px]" style={{ animation: "menu-pop 0.12s ease-out" }}>
-              <p className="text-[14px] font-semibold text-[#37322F] mb-1">Archive this habit?</p>
-              <p className="text-[12.5px] text-[rgba(55,50,47,0.50)] mb-4">It will be removed from your daily checklist. Your streak data is preserved.</p>
-              <div className="flex justify-end gap-2">
-                <button onClick={() => setConfirmArchive(false)} className="px-3 py-1.5 text-[12.5px] font-medium text-[rgba(55,50,47,0.55)] hover:text-[#37322F] rounded-lg hover:bg-[rgba(55,50,47,0.05)] transition-colors">
-                  Keep it
-                </button>
-                <button onClick={handleArchive} disabled={isPending} className="px-3 py-1.5 text-[12.5px] font-medium text-white bg-rose-500 rounded-lg hover:bg-rose-600 transition-colors disabled:opacity-50">
-                  {isPending ? "Archiving..." : "Archive"}
-                </button>
-              </div>
-            </div>
+          <div
+            className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm"
+            style={{ animation: "schro-fade 0.3s ease-out" }}
+          />
+          <div className="fixed inset-0 z-[201] flex flex-col items-center justify-center p-4">
+            <div className="w-12 h-12 border-2 border-rose-500/20 border-t-rose-500 rounded-full animate-spin mb-6 shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
+            <p className="text-[11px] font-mono font-bold tracking-[0.3em] uppercase text-rose-500/80 animate-pulse text-center leading-relaxed">
+              Calculating<br />catastrophic consequences...
+            </p>
           </div>
         </>
+      )}
+
+      {/* Schrödinger's Warning Modal */}
+      {schrodingerWarning && (
+        <SchrodingerModal
+          warning={schrodingerWarning}
+          isDeleting={isPending}
+          onConfirmDelete={handleArchive}
+          onCancel={() => setSchrodingerWarning(null)}
+        />
       )}
 
       <style>{`
@@ -172,7 +199,12 @@ export default function HabitCard({ habit, streak, onEdit }: HabitCardProps) {
           from { opacity: 0; transform: scale(0.95); }
           to { opacity: 1; transform: scale(1); }
         }
+        @keyframes schro-fade {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
       `}</style>
     </div>
   )
 }
+

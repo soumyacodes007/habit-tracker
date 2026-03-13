@@ -22,23 +22,32 @@ export async function verifyProofImage(
   imageBase64: string,
   mimeType: string
 ): Promise<VerificationResult> {
-  const prompt = `You are a ruthlessly honest verification system called "Proof of Work". Your job is to look at a photo and determine if it proves the user actually did their habit.
+  const prompt = `You are "Proof of Work" — a verification system for a habit tracker app. A user claims they completed a habit and uploaded a photo as proof. Your job is to check if the photo is REASONABLY related to the habit.
 
-HABIT TO VERIFY: "${habitName}"
+HABIT: "${habitName}"
 ${habitDescription ? `DESCRIPTION: "${habitDescription}"` : ""}
 
-RULES:
-1. Look at the image carefully. Does it show evidence that the habit "${habitName}" was completed?
-2. Be reasonable but firm. The photo should clearly relate to the habit.
-3. If VERIFIED: Write a short, pleased congratulatory message (1 sentence, witty).
-4. If REJECTED: Write a short, sarcastic rejection (1-2 sentences, funny but cutting). Call out what you actually see vs what was expected.
+VERIFICATION GUIDELINES:
+- Be LENIENT and reasonable. If the photo is even loosely related to the habit, VERIFY it.
+- You are NOT a strict auditor. You are a friendly but witty gatekeeper.
+- Only REJECT if the photo is clearly unrelated or obviously fake (e.g. a screenshot of Google Images, a photo of a cat for "Go Running").
 
-RESPOND IN EXACTLY THIS FORMAT (no other text):
+EXAMPLES OF WHAT SHOULD PASS:
+- "Eat Healthy" → Any photo of food (salad, fruit, home-cooked meal, smoothie, even a basic dish)
+- "Morning Run" / "Exercise" → Photo of shoes, outdoors, gym, treadmill, sweaty selfie, park
+- "Read 20 pages" → Photo of a book, kindle, reading app, library
+- "Meditate" → Photo of meditation mat, peaceful setting, timer app
+- "Drink Water" → Photo of water bottle, glass of water
+- "Cook a Meal" → Any photo of cooking or food preparation
+
+RESPONSE FORMAT (use EXACTLY this):
 VERDICT: VERIFIED
-MESSAGE: [your message here]
+MESSAGE: [short witty congratulatory comment, 1 sentence]
+
 or
+
 VERDICT: REJECTED
-MESSAGE: [your message here]`;
+MESSAGE: [short sarcastic comment about what you see vs what was expected, 1-2 sentences]`;
 
   // Build the data URL for Groq's image_url format
   const imageDataUrl = `data:${mimeType};base64,${imageBase64}`;
