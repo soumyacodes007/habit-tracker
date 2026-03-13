@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useOptimistic, startTransition as reactStartTransition } from "react"
 import { toggleCompletionAction } from "@/app/actions/completions"
+import ProofUploadModal from "./proof-upload-modal"
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -54,6 +55,14 @@ interface TimerState {
   duration: number // seconds
 }
 
+interface ProofState {
+  habitId: string
+  habitName: string
+  habitDescription: string | null
+  habitColor: string
+  habitIcon: string
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function HabitChecklist({
@@ -64,6 +73,7 @@ export default function HabitChecklist({
 }: HabitChecklistProps) {
   const todayKey = currentDayKey()
   const [timerState, setTimerState] = useState<TimerState | null>(null)
+  const [proofState, setProofState] = useState<ProofState | null>(null)
 
   // filter habits scheduled for today
   const todaysHabits = habits.filter((h) => {
@@ -147,9 +157,18 @@ export default function HabitChecklist({
                       habitName: habit.name,
                       habitColor: habit.color,
                       habitIcon: habit.icon,
-                      duration: habit.timerDuration * 60, // minutes → seconds
+                      duration: habit.timerDuration * 60,
                     })
                   }
+                }}
+                onRequestProof={() => {
+                  setProofState({
+                    habitId: habit.id,
+                    habitName: habit.name,
+                    habitDescription: habit.description ?? null,
+                    habitColor: habit.color,
+                    habitIcon: habit.icon,
+                  })
                 }}
               />
             )
@@ -164,6 +183,23 @@ export default function HabitChecklist({
           date={date}
           onComplete={handleTimerComplete}
           onClose={() => setTimerState(null)}
+        />
+      )}
+
+      {/* Proof of Work modal */}
+      {proofState && (
+        <ProofUploadModal
+          habitId={proofState.habitId}
+          habitName={proofState.habitName}
+          habitDescription={proofState.habitDescription}
+          habitColor={proofState.habitColor}
+          habitIcon={proofState.habitIcon}
+          date={date}
+          onVerified={() => {
+            reactStartTransition(() => addOptimistic(proofState.habitId))
+            setProofState(null)
+          }}
+          onClose={() => setProofState(null)}
         />
       )}
     </div>
@@ -343,7 +379,7 @@ function TimerPopup({ state, date, onComplete, onClose }: {
 // ─── Individual habit row ────────────────────────────────────────────────────
 
 function HabitRow({
-  habit, isCompleted, streak, date, onToggle, onStartTimer,
+  habit, isCompleted, streak, date, onToggle, onStartTimer, onRequestProof,
 }: {
   habit: Habit
   isCompleted: boolean
@@ -351,6 +387,7 @@ function HabitRow({
   date: string
   onToggle: () => void
   onStartTimer: () => void
+  onRequestProof: () => void
 }) {
   const [isPending, startTransition] = useTransition()
   const [noteOpen, setNoteOpen] = useState(false)
@@ -363,6 +400,14 @@ function HabitRow({
       onStartTimer()
       return
     }
+
+    // If checking off (not unchecking), require Proof of Work
+    if (!isCompleted) {
+      onRequestProof()
+      return
+    }
+
+    // Unchecking — no proof needed
     onToggle()
     startTransition(async () => {
       await toggleCompletionAction(habit.id, date, note || undefined)
