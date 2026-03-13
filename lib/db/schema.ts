@@ -26,7 +26,9 @@ export const habits = pgTable("habits", {
   name: text("name").notNull(),
   description: text("description"),
   color: text("color").notNull().default("#6366f1"), // indigo default
-  icon: text("icon").notNull().default("✅"),
+  icon: text("icon").notNull().default(""),
+  habitType: text("habit_type").notNull().default("check"), // "check" | "timer"
+  timerDuration: text("timer_duration"), // minutes (stored as text for simplicity, parsed as int)
   targetDays: json("target_days").$type<string[]>().default(["mon", "tue", "wed", "thu", "fri", "sat", "sun"]),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()

@@ -25,7 +25,7 @@ export async function getHabitById(
 
 export type CreateHabitInput = Pick<
   NewHabit,
-  "name" | "description" | "color" | "icon" | "targetDays"
+  "name" | "description" | "color" | "icon" | "targetDays" | "habitType" | "timerDuration"
 >;
 
 export async function createHabit(
@@ -42,7 +42,7 @@ export async function createHabit(
 // ─── Update ───────────────────────────────────────────────────────────────────
 
 export type UpdateHabitInput = Partial<
-  Pick<NewHabit, "name" | "description" | "color" | "icon" | "targetDays">
+  Pick<NewHabit, "name" | "description" | "color" | "icon" | "targetDays" | "habitType" | "timerDuration">
 >;
 
 export async function updateHabit(

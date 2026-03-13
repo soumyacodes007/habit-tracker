@@ -19,6 +19,8 @@ const createHabitSchema = z.object({
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
   icon: z.string().max(4).optional(),
   targetDays: z.array(z.enum(validDays)).min(1).optional(),
+  habitType: z.enum(["check", "timer"]).optional(),
+  timerDuration: z.string().optional(), // minutes as string
 });
 
 const updateHabitSchema = createHabitSchema.partial();
@@ -34,6 +36,8 @@ export async function createHabitAction(formData: FormData) {
     description: formData.get("description") || undefined,
     color: formData.get("color") || undefined,
     icon: formData.get("icon") || undefined,
+    habitType: formData.get("habitType") || undefined,
+    timerDuration: formData.get("timerDuration") || undefined,
   };
 
   // targetDays comes as JSON string from forms
@@ -67,6 +71,8 @@ export async function updateHabitAction(habitId: string, formData: FormData) {
     description: formData.get("description") || undefined,
     color: formData.get("color") || undefined,
     icon: formData.get("icon") || undefined,
+    habitType: formData.get("habitType") || undefined,
+    timerDuration: formData.get("timerDuration") || undefined,
   };
 
   const targetDaysRaw = formData.get("targetDays");
