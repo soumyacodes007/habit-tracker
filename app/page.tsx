@@ -193,8 +193,8 @@ export default function LandingPage() {
                             }`}
                         >
                           <img
-                            src="/analytics-dashboard-with-charts-graphs-and-data-vi.jpg"
-                            alt="Analytics Dashboard"
+                            src="/image-calender.png"
+                            alt="Habit Tracker Calendar"
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -205,8 +205,8 @@ export default function LandingPage() {
                             }`}
                         >
                           <img
-                            src="/data-visualization-dashboard-with-interactive-char.jpg"
-                            alt="Data Visualization Dashboard"
+                            src="/image-calender.png"
+                            alt="Habit Tracker Calendar"
                             className="w-full h-full object-contain" // Changed from object-cover to object-contain to preserve landscape aspect ratio
                           />
                         </div>

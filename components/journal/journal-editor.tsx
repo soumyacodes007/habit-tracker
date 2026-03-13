@@ -10,6 +10,7 @@ import TaskList from "@tiptap/extension-task-list"
 import TaskItem from "@tiptap/extension-task-item"
 import Image from "@tiptap/extension-image"
 import { createJournalEntryAction, updateJournalEntryAction } from "@/app/actions/journal"
+import { analyzeEntryAction } from "@/app/actions/insights"
 
 type Mood = "happy" | "neutral" | "sad"
 
@@ -130,6 +131,7 @@ function ToolbarSep() {
 // ─── Save state ───────────────────────────────────────────────────────────────
 
 type SaveState = "idle" | "saving" | "saved" | "error"
+type AnalyzeState = "idle" | "analyzing" | "done" | "error"
 
 // ─── Main editor ─────────────────────────────────────────────────────────────
 
@@ -140,6 +142,8 @@ export default function JournalEditor({ date, existing }: JournalEditorProps) {
   const [lastSaved, setLastSaved] = useState<Date | null>(
     existing?.updatedAt ? new Date(existing.updatedAt) : null
   )
+  const [analyzeState, setAnalyzeState] = useState<AnalyzeState>("idle")
+  const [sentimentResult, setSentimentResult] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [, startTransition] = useTransition()
@@ -581,17 +585,86 @@ export default function JournalEditor({ date, existing }: JournalEditorProps) {
               </>
             )}
           </span>
-          <span
-            className={[
-              "text-[11px] font-medium transition-colors duration-150",
-              saveState === "saving" && "text-[rgba(55,50,47,0.40)]",
-              saveState === "saved" && "text-emerald-600",
-              saveState === "error" && "text-rose-500",
-              saveState === "idle" && "invisible",
-            ].filter(Boolean).join(" ")}
-          >
-            {saveLabel}
-          </span>
+
+          <div className="flex items-center gap-3">
+            {/* Save state */}
+            <span
+              className={[
+                "text-[11px] font-medium transition-colors duration-150",
+                saveState === "saving" && "text-[rgba(55,50,47,0.40)]",
+                saveState === "saved" && "text-emerald-600",
+                saveState === "error" && "text-rose-500",
+                saveState === "idle" && "invisible",
+              ].filter(Boolean).join(" ")}
+            >
+              {saveLabel}
+            </span>
+
+            {/* Sentiment badge (after analysis) */}
+            {sentimentResult && analyzeState === "done" && (
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 transition-all animate-in fade-in">
+                {sentimentResult}
+              </span>
+            )}
+
+            {/* Submit & Analyze button */}
+            <button
+              disabled={!entryId || wordCount < 8 || analyzeState === "analyzing"}
+              onClick={async () => {
+                if (!entryId) return
+                // Save first if there are pending changes
+                if (editor && saveState !== "saved") {
+                  if (debounceRef.current) clearTimeout(debounceRef.current)
+                  save(editor.getHTML(), mood)
+                }
+                setAnalyzeState("analyzing")
+                setSentimentResult(null)
+                try {
+                  const result = await analyzeEntryAction(entryId)
+                  if (result.data) {
+                    setAnalyzeState("done")
+                    setSentimentResult(result.data.sentiment)
+                    setTimeout(() => setAnalyzeState("idle"), 8000)
+                  } else {
+                    setAnalyzeState("error")
+                    setTimeout(() => setAnalyzeState("idle"), 3000)
+                  }
+                } catch {
+                  setAnalyzeState("error")
+                  setTimeout(() => setAnalyzeState("idle"), 3000)
+                }
+              }}
+              className={[
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11.5px] font-semibold transition-all duration-150",
+                analyzeState === "analyzing"
+                  ? "bg-[rgba(55,50,47,0.08)] text-[rgba(55,50,47,0.45)] cursor-wait"
+                  : analyzeState === "error"
+                  ? "bg-rose-50 text-rose-600 border border-rose-200"
+                  : !entryId || wordCount < 8
+                  ? "bg-[rgba(55,50,47,0.04)] text-[rgba(55,50,47,0.25)] cursor-not-allowed"
+                  : "bg-[#37322F] text-white hover:opacity-90 shadow-sm",
+              ].join(" ")}
+            >
+              {analyzeState === "analyzing" ? (
+                <>
+                  <svg width="12" height="12" viewBox="0 0 12 12" className="animate-spin">
+                    <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.2" fill="none" strokeDasharray="20" strokeDashoffset="8" strokeLinecap="round" />
+                  </svg>
+                  Analyzing...
+                </>
+              ) : analyzeState === "error" ? (
+                "Failed"
+              ) : (
+                <>
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <circle cx="6" cy="6" r="2" stroke="currentColor" strokeWidth="1.1" />
+                    <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="0.8" strokeOpacity="0.5" />
+                  </svg>
+                  Submit & Analyze
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </>

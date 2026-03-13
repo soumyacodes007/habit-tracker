@@ -78,6 +78,10 @@ export const journalEntries = pgTable(
     content: text("content").notNull(),
     mood: moodEnum("mood"),
     date: date("date").notNull(), // 'YYYY-MM-DD'
+    // AI-generated fields (populated after save)
+    sentiment: text("sentiment"), // "positive" | "anxious" | "neutral" | "lethargic" | "frustrated" | "grateful"
+    themes: json("themes").$type<string[]>(), // ["Work Stress", "Good Sleep", ...]
+    aiSummary: text("ai_summary"), // one-line AI distillation
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

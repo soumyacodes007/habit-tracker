@@ -47,6 +47,16 @@ function FlameIcon() {
   )
 }
 
+function InsightsIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="7" cy="7" r="2" stroke="currentColor" strokeWidth="1.2" />
+      <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.0" strokeOpacity="0.6" />
+      <circle cx="7" cy="7" r="6.5" stroke="currentColor" strokeWidth="0.8" strokeOpacity="0.3" />
+    </svg>
+  )
+}
+
 function CalendarIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -107,6 +117,11 @@ const PRIMARY_NAV: NavItem[] = [
     label: "Streaks",
     href: "/streaks",
     icon: <FlameIcon />,
+  },
+  {
+    label: "Insights",
+    href: "/insights",
+    icon: <InsightsIcon />,
   },
   {
     label: "History",

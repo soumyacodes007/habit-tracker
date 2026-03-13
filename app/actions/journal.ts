@@ -8,6 +8,8 @@ import {
   updateJournalEntry,
   deleteJournalEntry,
 } from "@/lib/repositories/journal";
+import { analyzeJournalEntry } from "@/lib/ai/analyze-journal";
+import { saveInsights } from "@/lib/repositories/insights";
 
 // ─── Validation schemas ───────────────────────────────────────────────────────
 
@@ -23,6 +25,20 @@ const updateJournalSchema = z.object({
   content: z.string().min(1).max(10_000).optional(),
   mood: moodSchema,
 });
+
+// ─── AI analysis helper (fire-and-forget) ─────────────────────────────────────
+
+async function triggerAnalysis(entryId: string, content: string) {
+  try {
+    const insight = await analyzeJournalEntry(content);
+    if (insight) {
+      await saveInsights(entryId, insight);
+      revalidatePath("/insights");
+    }
+  } catch (err) {
+    console.error("[AI] Background analysis error:", err);
+  }
+}
 
 // ─── Actions ──────────────────────────────────────────────────────────────────
 
@@ -42,6 +58,10 @@ export async function createJournalEntryAction(formData: FormData) {
 
   const entry = await createJournalEntry(userId, parsed.data);
   revalidatePath("/journal");
+
+  // Fire AI analysis in background (don't block the save)
+  triggerAnalysis(entry.id, parsed.data.content);
+
   return { data: entry };
 }
 
@@ -65,6 +85,12 @@ export async function updateJournalEntryAction(
   if (!entry) return { error: "Entry not found" };
 
   revalidatePath("/journal");
+
+  // Re-analyze if content was updated
+  if (parsed.data.content) {
+    triggerAnalysis(entryId, parsed.data.content);
+  }
+
   return { data: entry };
 }
 
