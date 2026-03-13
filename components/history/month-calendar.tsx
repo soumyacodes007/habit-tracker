@@ -35,11 +35,6 @@ const MONTH_NAMES = [
   "July", "August", "September", "October", "November", "December",
 ]
 
-const MOOD_COLORS: Record<string, string> = {
-  happy: "#10b981",
-  neutral: "#f59e0b",
-  sad: "#ef4444",
-}
 
 export default function MonthCalendar({
   year, month, habits, completions, journalEntries, today, selectedDate, onDayClick,
@@ -111,7 +106,7 @@ export default function MonthCalendar({
                 return (
                   <div
                     key={di}
-                    className="border-r border-b border-[rgba(55,50,47,0.08)] min-h-[72px] bg-[rgba(55,50,47,0.015)]"
+                    className="border-r border-b border-[rgba(55,50,47,0.08)] h-[84px] bg-[rgba(55,50,47,0.015)]"
                   />
                 )
               }
@@ -123,6 +118,19 @@ export default function MonthCalendar({
               const isSelected = cell.date === selectedDate
               const isFuture = cell.date > today
 
+              // Find the emoji and color for the journal mood
+              let moodColor = "transparent"
+              let moodEmoji = ""
+              if (hasJournal) {
+                 if (journalMood === "happy" || journalMood === "positive") { moodColor = "#10b981"; moodEmoji = "🤩"; }
+                 else if (journalMood === "grateful") { moodColor = "#06b6d4"; moodEmoji = "😌"; }
+                 else if (journalMood === "neutral") { moodColor = "#64748b"; moodEmoji = "😐"; }
+                 else if (journalMood === "anxious") { moodColor = "#f59e0b"; moodEmoji = "😬"; }
+                 else if (journalMood === "lethargic") { moodColor = "#8b5cf6"; moodEmoji = "🥱"; }
+                 else if (journalMood === "sad" || journalMood === "frustrated") { moodColor = "#ef4444"; moodEmoji = "😫"; }
+                 else { moodColor = "#64748b"; moodEmoji = "·"; } 
+              }
+
               return (
                 <button
                   key={cell.date}
@@ -130,53 +138,68 @@ export default function MonthCalendar({
                   onClick={() => !isFuture && onDayClick(cell.date!)}
                   disabled={isFuture}
                   className={[
-                    "relative border-r border-b border-[rgba(55,50,47,0.08)] min-h-[72px] p-2 text-left",
+                    "relative border-r border-b border-[rgba(55,50,47,0.08)] h-[84px] text-left overflow-hidden",
                     "transition-colors duration-100 group",
                     isFuture ? "cursor-default" : "cursor-pointer hover:bg-[rgba(55,50,47,0.025)]",
                     isSelected ? "bg-[rgba(55,50,47,0.04)]" : "",
                   ].join(" ")}
                 >
-                  {/* Day number */}
-                  <span
-                    className={[
-                      "flex items-center justify-center w-6 h-6 rounded-full text-[12px] font-medium mb-1.5 transition-colors",
-                      isToday
-                        ? "bg-[#37322F] text-white"
-                        : isFuture
-                        ? "text-[rgba(55,50,47,0.22)]"
-                        : "text-[rgba(55,50,47,0.65)] group-hover:text-[#37322F]",
-                    ].join(" ")}
-                  >
-                    {cell.day}
-                  </span>
+                  {/* Date number: top-left corner, small (12px), gray text */}
+                  <div className="absolute top-1.5 left-2">
+                    <span
+                      className={[
+                        "text-[12px] font-medium leading-none transition-colors",
+                        isToday
+                          ? "text-[#37322F] font-bold"
+                          : isFuture
+                          ? "text-[rgba(55,50,47,0.22)]"
+                          : "text-[rgba(55,50,47,0.45)] group-hover:text-[#37322F]",
+                      ].join(" ")}
+                    >
+                      {cell.day}
+                    </span>
+                  </div>
 
-                  {/* Journal mood dot */}
-                  {hasJournal && (
-                    <div className="flex items-center gap-1 mb-1">
-                      <div
-                        className="w-1.5 h-1.5 rounded-full"
-                        style={{ backgroundColor: journalMood ? MOOD_COLORS[journalMood] : "rgba(55,50,47,0.4)" }}
-                      />
-                      <span className="text-[9px] text-[rgba(55,50,47,0.40)] font-medium">Journal</span>
+                  {/* Mood circle: fixed 40x40px centered in cell */}
+                  {hasJournal ? (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div 
+                        className="w-[40px] h-[40px] rounded-full flex items-center justify-center text-[20px] leading-none transition-transform group-hover:scale-110"
+                        style={{ 
+                          backgroundColor: `${moodColor}15`,
+                          border: `1px solid ${moodColor}30`,
+                        }}
+                      >
+                        <span style={{ 
+                          filter: `drop-shadow(0 2px 4px ${moodColor}40)` 
+                        }}>
+                          {moodEmoji}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                      <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center text-[20px] border border-dashed border-[rgba(55,50,47,0.1)] text-[rgba(55,50,47,0.1)]">
+                        +
+                      </div>
                     </div>
                   )}
 
-                  {/* Habit dots */}
+                  {/* Habit dots - positioned at the bottom */}
                   {completedIds.length > 0 && (
-                    <div className="flex flex-wrap gap-[3px]">
-                      {completedIds.slice(0, 6).map((id) => {
+                    <div className="absolute bottom-1.5 left-0 right-0 flex justify-center flex-wrap gap-[3px] px-1 pointer-events-none">
+                      {completedIds.slice(0, 5).map((id) => {
                         const habit = habits.find((h) => h.id === id)
                         return (
                           <div
                             key={id}
-                            className="w-2 h-2 rounded-full flex-shrink-0"
+                            className="w-[5px] h-[5px] rounded-full flex-shrink-0"
                             style={{ backgroundColor: habit?.color ?? "#37322F" }}
-                            title={habit?.name}
                           />
                         )
                       })}
-                      {completedIds.length > 6 && (
-                        <span className="text-[8px] text-[rgba(55,50,47,0.40)]">+{completedIds.length - 6}</span>
+                      {completedIds.length > 5 && (
+                        <span className="text-[7px] font-bold text-[rgba(55,50,47,0.40)] flex items-center pl-[1px] leading-none">+{completedIds.length - 5}</span>
                       )}
                     </div>
                   )}

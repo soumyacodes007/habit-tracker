@@ -22,18 +22,18 @@ interface InsightsClientProps {
 
 // ─── Sentiment config ────────────────────────────────────────────────────────
 
-const SENTIMENT_META: Record<string, { label: string; color: string; level: number }> = {
-  positive:   { label: "Positive",   color: "#10b981", level: 5 },
-  grateful:   { label: "Grateful",   color: "#06b6d4", level: 5 },
-  neutral:    { label: "Neutral",    color: "#64748b", level: 3 },
-  anxious:    { label: "Anxious",    color: "#f59e0b", level: 2 },
-  lethargic:  { label: "Lethargic",  color: "#8b5cf6", level: 1 },
-  frustrated: { label: "Frustrated", color: "#ef4444", level: 1 },
+const SENTIMENT_META: Record<string, { label: string; color: string; level: number; emoji: string }> = {
+  positive:   { label: "Positive",   color: "#10b981", level: 5, emoji: "🤩" },
+  grateful:   { label: "Grateful",   color: "#06b6d4", level: 5, emoji: "😌" },
+  neutral:    { label: "Neutral",    color: "#64748b", level: 3, emoji: "😐" },
+  anxious:    { label: "Anxious",    color: "#f59e0b", level: 2, emoji: "😬" },
+  lethargic:  { label: "Lethargic",  color: "#8b5cf6", level: 1, emoji: "🥱" },
+  frustrated: { label: "Frustrated", color: "#ef4444", level: 1, emoji: "😫" },
 }
 
 function getSentimentMeta(s: string | null) {
-  if (!s) return { label: "Pending", color: "rgba(55,50,47,0.20)", level: 3 }
-  return SENTIMENT_META[s] ?? { label: s, color: "#64748b", level: 3 }
+  if (!s) return { label: "Pending", color: "rgba(55,50,47,0.20)", level: 3, emoji: "·" }
+  return SENTIMENT_META[s] ?? { label: s, color: "#64748b", level: 3, emoji: "😐" }
 }
 
 // ─── Date helpers ────────────────────────────────────────────────────────────
@@ -276,16 +276,16 @@ export default function InsightsClient({ entries, today }: InsightsClientProps) 
             </div>
 
             {/* ──── Sentiment distribution + Mood Calendar ──── */}
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_350px] gap-6 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_380px] gap-6 items-stretch">
               {/* Sentiment distribution */}
-              <div className="rounded-xl bg-white border border-[rgba(55,50,47,0.08)] shadow-[0_1px_3px_rgba(55,50,47,0.04)] p-5 h-full">
-                <h2 className="text-[11px] font-semibold uppercase tracking-widest text-[rgba(55,50,47,0.38)] mb-4">
+              <div className="rounded-xl bg-white border border-[rgba(55,50,47,0.08)] shadow-[0_1px_3px_rgba(55,50,47,0.04)] p-6 flex flex-col">
+                <h2 className="text-[11px] font-semibold uppercase tracking-widest text-[rgba(55,50,47,0.38)] mb-5">
                   Sentiment breakdown
                 </h2>
                 {analyzed.length === 0 ? (
                   <p className="text-[12.5px] text-[rgba(55,50,47,0.35)]">No analyzed entries yet</p>
                 ) : (
-                  <div className="flex flex-col gap-3.5">
+                  <div className="flex flex-col gap-6 flex-1 justify-center">
                     {[...sentimentCounts.entries()]
                       .sort((a, b) => b[1] - a[1])
                       .map(([s, count]) => {
@@ -293,13 +293,13 @@ export default function InsightsClient({ entries, today }: InsightsClientProps) 
                         const pct = Math.round((count / analyzed.length) * 100)
                         return (
                           <div key={s} className="flex items-center gap-3">
-                            <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: meta.color }} />
-                            <span className="text-[13px] text-[#37322F] font-medium w-24">{meta.label}</span>
-                            <div className="flex-1 h-[6px] rounded-full bg-[rgba(55,50,47,0.06)] overflow-hidden">
+                            <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: meta.color }} />
+                            <span className="text-[13.5px] text-[#37322F] font-medium w-28">{meta.label}</span>
+                            <div className="flex-1 h-[7px] rounded-full bg-[rgba(55,50,47,0.06)] overflow-hidden">
                               <div className="h-full rounded-full transition-all duration-500"
                                 style={{ width: `${pct}%`, backgroundColor: meta.color, opacity: 0.8 }} />
                             </div>
-                            <span className="text-[11.5px] text-[rgba(55,50,47,0.40)] font-semibold tabular-nums w-8 text-right">
+                            <span className="text-[12px] text-[rgba(55,50,47,0.40)] font-semibold tabular-nums w-10 text-right">
                               {pct}%
                             </span>
                           </div>
@@ -320,10 +320,10 @@ export default function InsightsClient({ entries, today }: InsightsClientProps) 
                   </span>
                 </div>
 
-                <div className="grid grid-cols-7 gap-y-3 gap-x-1.5 text-center">
+                <div className="grid grid-cols-7 gap-2 text-center">
                   {/* Days of week header */}
                   {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
-                    <div key={i} className="text-[11px] font-bold text-[rgba(55,50,47,0.45)] mb-2">
+                    <div key={i} className="text-[10px] font-bold text-[rgba(55,50,47,0.45)] pb-2">
                       {d}
                     </div>
                   ))}
@@ -348,58 +348,45 @@ export default function InsightsClient({ entries, today }: InsightsClientProps) 
                       const entry = entries.find(e => e.date === dStr)
                       const sentiment = entry?.sentiment
                       const meta = sentiment ? getSentimentMeta(sentiment) : null
-
-                      // Determine face type
-                      const isGood = sentiment && ["positive", "happy", "grateful"].includes(sentiment)
-                      const isNeutral = sentiment && ["neutral"].includes(sentiment)
-                      const isBad = sentiment && !isGood && !isNeutral
+                      const emoji = meta?.emoji
 
                       cells.push(
-                        <div key={dStr} className={`relative flex flex-col items-center justify-center h-10 ${!isCurrentMonth ? "opacity-30" : ""}`}>
-                          {sentiment && meta ? (
-                            <div
-                              className="w-[28px] h-[28px] rounded-full flex items-center justify-center text-[#37322F] shadow-sm transform transition-transform hover:scale-110 z-10"
-                              style={{ backgroundColor: meta.color }}
-                              title={`${meta.label} - ${formatShortDate(dStr)}`}
-                            >
-                              <svg width="15" height="15" viewBox="0 0 18 18" fill="none">
-                                {isGood ? (
-                                  <>
-                                    <circle cx="6.5" cy="7" r="1.3" fill="currentColor" opacity="0.6" />
-                                    <circle cx="11.5" cy="7" r="1.3" fill="currentColor" opacity="0.6" />
-                                    <path d="M5.5 10.5C5.5 10.5 7 12.5 9 12.5C11 12.5 12.5 10.5 12.5 10.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.6" />
-                                  </>
-                                ) : isNeutral ? (
-                                  <>
-                                    <circle cx="6.5" cy="7" r="1.3" fill="currentColor" opacity="0.5" />
-                                    <circle cx="11.5" cy="7" r="1.3" fill="currentColor" opacity="0.5" />
-                                    <path d="M6 11.5H12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" />
-                                  </>
-                                ) : (
-                                  <>
-                                    <circle cx="6.5" cy="8" r="1.3" fill="currentColor" opacity="0.7" />
-                                    <circle cx="11.5" cy="8" r="1.3" fill="currentColor" opacity="0.7" />
-                                    <path d="M5.5 12C5.5 12 7 10 9 10C11 10 12.5 12 12.5 12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
-                                  </>
-                                )}
-                              </svg>
-                            </div>
-                          ) : (
-                            <div className={`w-[28px] h-[28px] rounded-full flex items-center justify-center z-10 ${isToday ? "border-[1.5px] border-[rgba(55,50,47,0.2)]" : ""}`}>
-                               <span className={`text-[11px] font-medium leading-none ${isToday ? "text-[#37322F]" : "text-[rgba(55,50,47,0.3)]"}`}>
-                                 {d.getDate()}
-                               </span>
-                            </div>
-                          )}
-                          {/* Selected ring for today */}
-                          {isToday && sentiment && (
-                            <div className="absolute inset-0 m-auto w-9 h-9 border border-[rgba(55,50,47,0.15)] rounded-full z-0" />
-                          )}
-                          {/* Day number below if face is shown */}
-                          {sentiment && (
-                            <span className="text-[9px] font-medium text-[rgba(55,50,47,0.25)] mt-1 tracking-tight leading-none absolute -bottom-3">
+                        <div 
+                          key={dStr} 
+                          className={`relative h-[60px] transition-all duration-150 ${
+                            !isCurrentMonth ? "opacity-30" : ""
+                          }`}
+                          title={sentiment ? `${meta?.label} - ${formatShortDate(dStr)}` : formatShortDate(dStr)}
+                        >
+                          {/* Date number - top-left corner */}
+                          <div className="absolute top-1 left-1.5">
+                            <span className={`text-[12px] font-medium leading-none ${isToday ? "text-[#37322F] font-bold" : "text-[rgba(55,50,47,0.45)]"}`}>
                               {d.getDate()}
                             </span>
+                          </div>
+
+                          {/* Mood circle - fixed 40x40px centered in cell */}
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div 
+                              className="w-[40px] h-[40px] rounded-full flex items-center justify-center text-[22px] leading-none transition-transform hover:scale-110"
+                              style={{ 
+                                backgroundColor: meta ? `${meta.color}15` : "transparent",
+                                border: meta ? `1px solid ${meta.color}30` : "none",
+                              }}
+                            >
+                              <span style={{ 
+                                filter: meta ? `drop-shadow(0 2px 4px ${meta.color}40)` : 'none' 
+                              }}>
+                                {emoji || ""}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Today indicator ring */}
+                          {isToday && (
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                              <div className="w-[44px] h-[44px] rounded-full border border-[rgba(55,50,47,0.15)]" />
+                            </div>
                           )}
                         </div>
                       )
